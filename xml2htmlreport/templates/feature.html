@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+    {%- block title %}
+        <title>{{ ".".join(features[feature_number].testsuite['@name'].split('.')[1:])|escape }}</title>
+    {% endblock -%}
+
+    {%- block navbar_name %}
+    <a class="navbar-brand" href="#">
+    {{ ".".join(features[feature_number].testsuite['@name'].split('.')[1:])|escape }}
+    </a>
+    {% endblock navbar_name -%}
+
+{%- block dashboard %}
+  <h1 class="page-header" id="dashboard">Dashboard</h1>
+    <div class="row placeholders">
+      <div class="col-xs-4 col-sm-4 col-lg-4 placeholder" style='height: 250px' id="scenarios-donut">
+      </div>
+      <div class="col-xs-4 col-sm-4 col-lg-4 placeholder">
+        <img data-src="holder.js/250x250?text=Feature Scenarios: \n {{ features[feature_number].testsuite['@tests']|int() }}&theme=sky" class="img-responsive">
+      </div>
+      <div class="col-xs-4 col-sm-4 col-lg-4 placeholder">
+        <img data-src="holder.js/250x250?text=Time taken: \n {{ features[feature_number].testsuite['@time'] }} \n seconds.&theme=industrial" class="img-responsive">
+      </div>
+    </div>
+{% endblock -%}
+
+{%- block content %}
+          <h2 class="sub-header">Features overall:</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>&nbsp;</th>
+                  <th>Scenario Name:</th>
+                  <th>Status:</th>
+                  <th>Time taken:</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for testcase in features[feature_number].testsuite.testcase %}
+                <tr data-toggle="collapse" data-target="#{{ loop.index }}" class="clickable">
+                    <td><button class="btn btn-xs btn-
+                    {%- if testcase['@status'] == 'skipped' %}info{% elif testcase['@status'] == 'passed' %}success{% else %}warning{% endif -%}
+                    ">&nbsp;<i class="fa fa-exclamation"></i>&nbsp;</button></td>
+                    <td>{{ testcase['@name'] }}</td>
+                    <td class="{% if testcase['@status'] == 'passed' %}text-success{% elif testcase['@status'] == 'skipped' %}text-info{% else %}text-danger{% endif %}">{{ testcase['@status']|capitalize }}</td>
+                    <td>{{ testcase['@time'] }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div id="{{ loop.index }}" class="collapse">
+                            {% if testcase['@failure'] %}
+                            <p class="text-danger">
+                                {{ testcase['@failure']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
+                            </p>
+                            {% endif %}
+                            <p class="text-info">
+                                {{ testcase['system-out']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
+                            </p>
+                            {% if testcase['system-err'] %}
+                            <p class="text-danger">
+                                {{ testcase['system-err']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
+                            </p>
+                            {% endif %}
+                            {% for image in testcase['images'] %}
+                            <p>
+                               <img src="static/img/screenshots/{{ image }}">
+                            </p>
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{% endblock content -%}
+
+{%- block footer %}
+    <div class="push"></div>
+</section>
+    <!-- Footer -->
+    <footer class="text-center footer">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-offset-3 col-lg-9">
+                        Copyright &copy; Remedy Point Solutions. 2015
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock footer -%}
+
+
+{%- block scripts %}
+<script>
+new Morris.Donut({
+  element: 'scenarios-donut',
+  data: [
+    {label: "Scenarios Passed", value: {{ features[feature_number].testsuite['@tests']|int() - features[feature_number].testsuite['@errors']|int() - features[feature_number].testsuite['@failures']|int() - features[feature_number].testsuite['@skipped']|int() }}},
+    {label: "Scenarios Failed", value: {{ features[feature_number].testsuite['@errors']|int() }}},
+    {label: "Scenarios Errors", value: {{ features[feature_number].testsuite['@failures']|int() }}},
+    {label: "Scenarios Skipped", value: {{ features[feature_number].testsuite['@skipped']|int() }}},
+  ],
+  colors: [
+    '#00CC00',
+    '#CC0000',
+    '#FF9900',
+    '#0066FF',
+    ]
+});
+</script>
+{% endblock scripts -%}
+
+</body>
+
+</html>

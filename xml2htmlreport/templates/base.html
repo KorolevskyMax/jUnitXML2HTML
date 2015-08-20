@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    {%- block head %}
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="RPS Test Run Report">
+        <meta name="author" content="max_korolevsky">
+
+        <link rel="shortcut icon" href="./static/img/favicon.ico" />
+        <!-- Bootstrap Core CSS - Uses Bootswatch Flatly Theme: http://bootswatch.com/flatly/ -->
+        <link href="./static/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="./static/css/style.css" rel="stylesheet">
+        <link href="./static/css/morris.css" rel="stylesheet">
+        <link href="./static/css/dashboard.css" rel="stylesheet">
+
+
+        <!-- Custom Fonts -->
+        <link href="./static/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+        <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300" rel="stylesheet" type="text/css"/>
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <!-- jQuery -->
+        <script src="./static/js/jquery.min.js"></script>
+        <script src="./static/js/jquery.easing.min.js"></script>
+        <!-- Bootstrap Core JavaScript -->
+        <script src="./static/js/bootstrap.min.js"></script>
+        <!-- Plugin JavaScript -->
+        <script src="./static/js/classie.js"></script>
+        <script src="./static/js/Sortable.js"></script>
+        <script src="./static/js/angular.min.js"></script>
+        <script src="./static/js/ng-sortable.js"></script>
+        <script src="./static/js/holder.js"></script>
+        <script src="./static/js/raphael-min.js"></script>
+        <script src="./static/js/morris.min.js"></script>
+
+    {% endblock head -%}
+
+    {%- block title %}
+        <title>
+            {% if page.title %}
+              {{ page.title }}
+            {% else %}
+              Test Run Report
+            {% endif %}
+        </title>
+    {% endblock -%}
+</head>
+
+<body id="page-top" class="index">
+
+{%- block navigation %}
+    <!-- Navigation -->
+     <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          {%- block navbar_name %}
+          <a class="navbar-brand" href="#">
+            {% if page.title %}
+              {{ page.title }}
+            {% else %}
+              Test Run Report
+            {% endif %}
+          </a>
+          {% endblock navbar_name -%}
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="index.html"><i class="fa fa-bar-chart"></i> Dashboard</a></li>
+{#            <li class="dropdown open">#}
+{#              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="true"><i class="fa fa-list"></i> Features<span class="caret"></span></a>#}
+{#              <ul class="dropdown-menu" role="menu">#}
+{#                {% for f in features %}#}
+{#                  <li><a href="/features/{{ f.testsuite['@name'].split('.')[0] }}.html">{{ ".".join(f.testsuite['@name'].split('.')[1:])|escape }}</a></li>#}
+{#                {% endfor %}#}
+{#              </ul>#}
+{#            </li>#}
+          </ul>
+        </div>
+      </div>
+    </nav>
+{% endblock navigation -%}
+
+<section class="wrapper">
+<div class="container-fluid">
+  <div class="row">
+
+{%- block sidebar %}
+<div class="col-sm-3 col-md-2 sidebar">
+  <ul class="nav nav-sidebar">
+    <li><a href="#dashboard">Overview</a></li>
+  </ul>
+  <ul class="nav nav-sidebar">
+    {% for f in features %}
+        <li class="list-group-item
+        {%- if loop.index0 == feature_number %} active {% endif -%}">
+            <a href="{{ f.testsuite['@name'].split('.')[0] }}.html">{{ ".".join(f.testsuite['@name'].split('.')[1:])|escape }}
+            {%- if f.testsuite['@failures']|int() or f.testsuite['@errors']|int() %}
+                <span class="badge error_span">{{ f.testsuite['@failures']|int() + f.testsuite['@errors']|int() }}</span>
+            {% endif -%}
+            </a>
+        </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock sidebar -%}
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+{%- block dashboard %}
+  <h1 class="page-header" id="dashboard">Dashboard</h1>
+    <div class="row placeholders">
+      <div class="col-xs-6 col-sm-3 col-lg-3 placeholder" style='height: 250px' id="features-donut"></div>
+      <div class="col-xs-6 col-sm-3 col-lg-3 placeholder" style='height: 250px' id="scenarios-donut"></div>
+      <div class="col-xs-6 col-sm-3 col-lg-3 placeholder">
+        <img data-src="holder.js/250x250?text=Total Features: \n {{ overall.features['@tests']|int() }} \n \n Total Scenarios: \n {{ overall.scenarios['@tests']|int() }}&theme=sky" class="img-responsive">
+      </div>
+      <div class="col-xs-6 col-sm-3 col-lg-3 placeholder">
+        <img data-src="holder.js/250x250?text=Time taken: \n {{ overall.features['@time'] }} \n seconds.&theme=industrial" class="img-responsive">
+      </div>
+    </div>
+{% endblock -%}
+
+{%- block content %}
+        <h2 class="sub-header">Features overall:</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>&nbsp;</th>
+                  <th class="text-left">Feature name: </th>
+                  <th class="text-right text-success">Passed: </th>
+                  <th class="text-right text-danger">Failed: </th>
+                  <th class="text-right text-warning">Errors: </th>
+                  <th class="text-right text-info">Skipped: </th>
+                  <th class="text-right">Total: </th>
+                  <th class="text-right">Time Taken: </th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for f in features %}
+                <tr data-toggle="collapse" data-target="#{{ f.testsuite['@name'].split('.')[0] }}" class="clickable">
+                    <td><button class="btn btn-xs btn-
+                    {%- if f.testsuite['@failures']|int() or f.testsuite['@errors']|int() %}warning{% else %}success{% endif -%}
+                    ">&nbsp;<i class="fa fa-exclamation"></i>&nbsp;</button></td>
+                    <td class="text-left">
+                        <a href="{{ f.testsuite['@name'].split('.')[0] }}.html" class="
+                            {%- if f.testsuite['@failures']|int() or f.testsuite['@errors']|int() %} text-danger {% endif -%}
+                        ">{{ ".".join(f.testsuite['@name'].split('.')[1:])|escape }}</a>
+                    </td>
+                    <td class="text-right text-success">{{ f.testsuite['@tests']|int() - f.testsuite['@errors']|int() - f.testsuite['@failures']|int() - f.testsuite['@skipped']|int() }}</td>
+                    <td class="text-right text-danger">{{ f.testsuite['@failures']|int() }}</td>
+                    <td class="text-right text-warning">{{ f.testsuite['@errors']|int() }}</td>
+                    <td class="text-right text-info">{{ f.testsuite['@skipped']|int() }}</td>
+                    <td class="text-right">{{ f.testsuite['@tests']|int() }}</td>
+                    <td class="text-right">{{ f.testsuite['@time'] }}</td>
+                </tr>
+                <tr>
+                    <td colspan="8">
+                        <div id="{{ f.testsuite['@name'].split('.')[0] }}" class="collapse">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Scenario Name:</th>
+                                        <th>Status:</th>
+                                        <th>Time taken:</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for testcase in f.testsuite.testcase %}
+                                <tr>
+                                    <td>{{ testcase['@name'] }}</td>
+                                    <td class="{% if testcase['@status'] == 'passed' %}text-success{% elif testcase['@status'] == 'skipped' %}text-info{% else %}text-danger{% endif %}">{{ testcase['@status']|capitalize }}</td>
+                                    <td>{{ testcase['@time'] }}</td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock content -%}
+
+{%- block footer %}
+    <div class="push"></div>
+</section>
+    <!-- Footer -->
+    <footer class="text-center footer">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-offset-3 col-lg-9">
+                        Copyright &copy; Remedy Point Solutions. 2015
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock footer -%}
+
+
+{%- block scripts %}
+<script>
+new Morris.Donut({
+  element: 'features-donut',
+  data: [
+    {label: "Features Passed", value: {{ overall.features['@tests']|int() - overall.features['@errors']|int() - overall.features['@failures']|int() - overall.features['@skipped']|int() }}},
+    {label: "Features Failed", value: {{ overall.features['@errors']|int() }}},
+    {label: "Features Errors", value: {{ overall.features['@failures']|int() }}},
+    {label: "Features Skipped", value: {{ overall.features['@skipped']|int() }}},
+  ],
+  colors: [
+    '#00CC00',
+    '#CC0000',
+    '#FF9900',
+    '#0066FF',
+    ]
+});
+
+new Morris.Donut({
+  element: 'scenarios-donut',
+  data: [
+    {label: "Scenarios Passed", value: {{ overall.scenarios['@tests']|int() - overall.scenarios['@errors']|int() - overall.scenarios['@failures']|int() - overall.scenarios['@skipped']|int() }}},
+    {label: "Scenarios Failed", value: {{ overall.scenarios['@errors']|int() }}},
+    {label: "Scenarios Errors", value: {{ overall.scenarios['@failures']|int() }}},
+    {label: "Scenarios Skipped", value: {{ overall.scenarios['@skipped']|int() }}},
+  ],
+  colors: [
+    '#00CC00',
+    '#CC0000',
+    '#FF9900',
+    '#0066FF',
+    ]
+});
+</script>
+{% endblock scripts -%}
+
+</body>
+
+</html>
