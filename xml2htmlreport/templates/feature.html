@@ -48,9 +48,9 @@
                 <tr>
                     <td colspan="4">
                         <div id="{{ loop.index }}" class="collapse">
-                            {% if testcase['@failure'] %}
+                            {% if testcase['failure'] %}
                             <p class="text-danger">
-                                {{ testcase['@failure']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
+                                {{ testcase['failure']['#text']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
                             </p>
                             {% endif %}
                             <p class="text-info">
