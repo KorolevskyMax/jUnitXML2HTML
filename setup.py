@@ -28,7 +28,7 @@ setup(
     classifiers=classifiers,
     keywords='test automation tool',
     packages=["xml2htmlreport"],
-    package_data={"xml2htmlreport": ["static/*.*" , "templates/*.*"]},
+    package_data={"xml2htmlreport": ["static/*" , "templates/*.*"]},
     install_requires=["jinja2", "xmltodict", ],
     entry_points={"console_scripts": ["xml2htmlreport = xml2htmlreport.cli:main"]},
 )
