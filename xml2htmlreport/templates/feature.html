@@ -48,17 +48,22 @@
                 <tr>
                     <td colspan="4">
                         <div id="{{ loop.index }}" class="collapse">
-                            {% if testcase['failure'] %}
-                            <p class="text-danger">
-                                {{ testcase['failure']['#text']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
-                            </p>
-                            {% endif %}
                             <p class="text-info">
                                 {{ testcase['system-out']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
                             </p>
                             {% if testcase['system-err'] %}
                             <p class="text-danger">
                                 {{ testcase['system-err']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
+                            </p>
+                            {% endif %}
+                            {% if testcase['failure'] %}
+                            <p class="text-danger">
+                                {{ testcase['failure']['#text']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
+                            </p>
+                            {% endif %}
+                            {% if testcase['error'] %}
+                            <p class="text-danger">
+                                {{ testcase['error']['#text']|nl2br|replace(' ', '&nbsp;&nbsp;') }}
                             </p>
                             {% endif %}
                             {% for image in testcase['images'] %}
