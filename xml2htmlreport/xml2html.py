@@ -54,7 +54,7 @@ def copy_static(args):
 
 
 def render_templates(args, features_results):
-    env = Environment(loader=PackageLoader('xml2html', 'templates'))
+    env = Environment(loader=PackageLoader('xml2htmlreport', 'templates'))
     env.filters['nl2br'] = nl2br
     template = env.get_template('base.html')
     feature_template = env.get_template('feature.html')
