@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-with open(path.join(path.dirname(__file__), "README.rst")) as readme:
+with open(path.join(path.dirname(__file__), "README.md")) as readme:
     long_description = readme.read()
 
 classifiers = [
@@ -29,7 +29,6 @@ setup(
     keywords='test automation tool',
     packages=["xml2htmlreport"],
     package_data={"xml2htmlreport": ["static/*.*" , "templates/*.*"]},
-    install_requires=["vcversioner", "jinja2", "xmltodict", ],
+    install_requires=["jinja2", "xmltodict", ],
     entry_points={"console_scripts": ["xml2htmlreport = xml2htmlreport.cli:main"]},
-    vcversioner={"version_module_paths" : ["xml2htmlreport/_version.py"]},
 )
