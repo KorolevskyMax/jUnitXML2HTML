@@ -72,6 +72,8 @@ def parse_screenshots(args, features_results):
                                 if os.path.isfile(os.path.abspath(os.path.join(args['screen_shots_folder'], f)))))
     except FileNotFoundError:
         return features_results
+    if not os.path.exists(os.path.join(args['html_folder'], 'static', 'img', 'screenshots')):
+        os.makedirs(os.path.join(args['html_folder'], 'static', 'img', 'screenshots'))
     for feature in features_results['features']:
         if feature['testsuite']['@tests'] > '1':
             for testcase in feature['testsuite']['testcase']:
