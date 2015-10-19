@@ -34,5 +34,5 @@ setup(
         "templates/*.*"
     ]},
     install_requires=["jinja2", "xmltodict", ],
-    entry_points={"console_scripts": ["xml2htmlreport = xml2htmlreport.cli:main"]},
+    entry_points={"console_scripts": ["xml2htmlreport=xml2htmlreport.cli:main"]},
 )
