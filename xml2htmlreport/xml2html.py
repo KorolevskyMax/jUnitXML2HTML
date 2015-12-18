@@ -36,9 +36,13 @@ def get_overall_results(features_results):
             features_results['overall']['scenarios'][key] = str(
                 float(features_results['overall']['scenarios'][key]) + float(feature['testsuite'][key]))
         for key in features_results['overall']['features']:
-            if feature['testsuite'][key] != '0' and key != '@time':
+            if feature['testsuite'][key] != '0' and key != '@time' and key != '@skipped':
                 features_results['overall']['features'][key] = str(
                     int(features_results['overall']['features'][key]) + 1)
+            elif key == '@skipped' and feature['testsuite'][key] != '0':
+                if feature['testsuite']['@errors'] == '0' or feature['testsuite']['@failures'] == '0' or feature['testsuite']['@tests'] == '0':
+                     features_results['overall']['features'][key] = str(
+                        int(features_results['overall']['features'][key]) + 1)
             elif key == '@time':
                 features_results['overall']['features'][key] = str(
                     float(features_results['overall']['features'][key]) + float(feature['testsuite'][key]))
