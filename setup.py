@@ -18,7 +18,7 @@ classifiers = [
 
 setup(
     name="xml2htmlreport",
-    version='1.0.0a1',
+    version='1.0.0a3s',
     description="An implementation of converter JUnit XML reports into Responsive HTML report with screenshots and dashboard",
     long_description=long_description,
     url="http://github.com/KorolevskyMax/jUnitXML2HTML",
