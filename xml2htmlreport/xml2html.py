@@ -40,7 +40,7 @@ def get_overall_results(features_results):
                 features_results['overall']['features'][key] = str(
                     int(features_results['overall']['features'][key]) + 1)
             elif key == '@skipped' and feature['testsuite'][key] != '0':
-                if feature['testsuite']['@errors'] == '0' or feature['testsuite']['@failures'] == '0' or feature['testsuite']['@tests'] == '0':
+                if feature['testsuite']['@skipped'] ==  feature['testsuite']['@tests']:
                      features_results['overall']['features'][key] = str(
                         int(features_results['overall']['features'][key]) + 1)
             elif key == '@time':
@@ -64,9 +64,11 @@ def render_templates(args, features_results):
     feature_template = env.get_template('feature.html')
     template.stream(features_results).dump(os.path.join(args['html_folder'], 'index.html'))
     count = 0
+    if not os.path.exists(os.path.join(args['html_folder'], 'features')):
+        os.makedirs(os.path.join(args['html_folder'], 'features'))
     for i in range(0, len(features_results['features'])):
         features_results['feature_number'] = i
-        feature_template.stream(features_results).dump(os.path.join(args['html_folder'], "{}.html".format(
+        feature_template.stream(features_results).dump(os.path.join(args['html_folder'], 'features', "{}.html".format(
             features_results['features'][i]['testsuite']['@name'].split('.')[0])))
 
 

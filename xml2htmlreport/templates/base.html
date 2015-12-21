@@ -81,6 +81,7 @@
           </a>
           {% endblock navbar_name -%}
         </div>
+      {%- block dashboard_link %}
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <li><a href="index.html"><i class="fa fa-bar-chart"></i> Dashboard</a></li>
@@ -94,6 +95,7 @@
 {#            </li>#}
           </ul>
         </div>
+      {% endblock dashboard_link -%}
       </div>
     </nav>
 {% endblock navigation -%}
@@ -111,7 +113,7 @@
     {% for f in features %}
         <li class="list-group-item
         {%- if loop.index0 == feature_number %} active {% endif -%}">
-            <a href="{{ f.testsuite['@name'].split('.')[0] }}.html">{{ ".".join(f.testsuite['@name'].split('.')[1:])|escape }}
+            <a href=" {%- if feature_number is not defined %}features/{% endif -%}{{ f.testsuite['@name'].split('.')[0] }}.html">{{ ".".join(f.testsuite['@name'].split('.')[1:])|escape }}
             {%- if f.testsuite['@failures']|int() or f.testsuite['@errors']|int() %}
                 <span class="badge error_span">{{ f.testsuite['@failures']|int() + f.testsuite['@errors']|int() }}</span>
             {% endif -%}
@@ -161,7 +163,7 @@
                     {%- if f.testsuite['@failures']|int() or f.testsuite['@errors']|int() %}warning{% else %}success{% endif -%}
                     ">&nbsp;<i class="fa fa-exclamation"></i>&nbsp;</button></td>
                     <td class="text-left">
-                        <a href="{{ f.testsuite['@name'].split('.')[0] }}.html" class="
+                        <a href="features/{{ f.testsuite['@name'].split('.')[0] }}.html" class="
                             {%- if f.testsuite['@failures']|int() or f.testsuite['@errors']|int() %} text-danger {% endif -%}
                         ">{{ ".".join(f.testsuite['@name'].split('.')[1:])|escape }}</a>
                     </td>
