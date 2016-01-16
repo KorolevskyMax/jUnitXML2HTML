@@ -11,7 +11,7 @@ from xml2htmlreport._filters import *
 
 def get_features_and_convert_into_dict(args):
     all_files = list((f for f in os.listdir(os.path.abspath(args['xml_folder']))
-                      if os.path.isfile(os.path.abspath(os.path.join(args['xml_folder'], f)))))
+                      if os.path.isfile(os.path.abspath(os.path.join(args['xml_folder'], f))) and f.endswith('.xml')))
     json_features = OrderedDict({'features': []})
     for f in all_files:
         with open(os.path.join(args['xml_folder'], f)) as feature:
